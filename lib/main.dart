@@ -1,63 +1,38 @@
-import 'package:flutter/material.dart'; // Подключаем Flutter UI-библиотеку
-import 'package:vibration/vibration.dart';
-import 'package:vibration/vibration_presets.dart';
+import 'package:flutter/material.dart';
+
+// Собственные модули
+import 'package:vibe_echo/services/vibe_device.dart';
 
 const appTitle = 'Vibe Echo';
 
-void vibrate(int vibroPreset) {
-  switch (vibroPreset) {
-    case 1:
-      Vibration.vibrate(duration: 1000); // вибрация одну секунду: всегда для теста
-      debugPrint('duration: 1000');
-      break;
-    case 2:
-      Vibration.vibrate(duration: 2000, amplitude: 96); // средняя сила вибрации
-      debugPrint('duration: 2000, amplitude: 96');
-      break;
-    case 3:
-      Vibration.vibrate(pattern: [200, 300, 200, 300, 200, 300]);
-      debugPrint('pattern: [200, 300, 200, 300, 200, 300]');
-      break;
-    case 4:
-      Vibration.vibrate(
-        pattern: [200, 400, 200, 600, 200, 800, 200, 1000],
-        intensities: [50, 128, 200, 250],
-      );
-      debugPrint('pattern: [200, 400, 200, 600, 200, 800, 200, 1000],\nintensities: [50, 128, 200, 250]');
-      break;
-    case 5:
-      // Готовые паттерны singleShortBuzz, doubleBuzz, heartbeatVibration, emergencyAlert
-      Vibration.vibrate(preset: VibrationPreset.emergencyAlert);
-      debugPrint('preset: VibrationPreset.emergencyAlert');
-      break;
-    default:
-      Vibration.vibrate(duration: 5000);
-      debugPrint('Default case: duration: 5000');
-  }
-}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-// Точка входа в приложение
-void main() {
-  runApp(const MyApp()); // Запускаем корневой виджет MyApp
+  final vibeDevice = await VibeDevice.create();
+
+  // Запускаем корневой виджет MyApp
+  runApp(MyApp(vibeDevice: vibeDevice));
 }
 
 // Корневой виджет
 class MyApp extends StatelessWidget {
-  const MyApp({super.key}); // Конструктор с ключом (стандартная практика)
+  final VibeDevice vibeDevice;
+  
+  const MyApp({super.key, required this.vibeDevice});
 
   @override
   Widget build(BuildContext context) {
-    // MaterialApp — обёртка, которая задаёт тему и навигацию
     return MaterialApp(
       title: 'Vibe Echo',
-      home: const MyHomePage(), // Главная страница приложения
+      home: MyHomePage(vibeDevice: vibeDevice),
     );
   }
 }
 
-// Главный экран — StatefulWidget (так как мы будем показывать SnackBar)
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final VibeDevice vibeDevice;
+
+  const MyHomePage({super.key, required this.vibeDevice});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -69,9 +44,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onButtonPressed(String text, int preset) {
     // ScaffoldMessenger — стандартный способ показать SnackBar (сообщение)
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(text)), // Показываем текст
+      SnackBar(content: Text(text)),
     );
-    vibrate(preset);
+    widget.vibeDevice.vibratePreset(preset: preset);
   }
 
   @override
