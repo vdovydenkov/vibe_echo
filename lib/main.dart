@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 
 // Собственные модули
 import 'package:vibe_echo/services/vibe_device.dart';
+import 'package:vibe_echo/core/logger_config.dart';
 
 const appTitle = 'Vibe Echo';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final myLog = initLogger();  
+  myLog.i('Starting...');
 
   final vibeDevice = await VibeDevice.create();
+
+  WidgetsFlutterBinding.ensureInitialized();
 
   // Запускаем корневой виджет MyApp
   runApp(MyApp(vibeDevice: vibeDevice));
