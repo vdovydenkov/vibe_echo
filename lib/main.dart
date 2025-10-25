@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 // Собственные модули
 import 'package:vibe_echo/services/vibe_device.dart';
 import 'package:vibe_echo/core/logger_config.dart';
+import 'package:vibe_echo/core/di.dart';
 
 const appTitle = 'Vibe Echo';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   final myLog = initLogger();  
   myLog.i('Starting...');
+  setupDependency<Logger>(myLog);
 
   final vibeDevice = await VibeDevice.create();
-
-  WidgetsFlutterBinding.ensureInitialized();
+  // 
+  setupDependency<VibeDevice>(vibeDevice);
 
   // Запускаем корневой виджет MyApp
   runApp(MyApp(vibeDevice: vibeDevice));
@@ -45,7 +50,7 @@ class MyHomePage extends StatefulWidget {
 // Состояние главной страницы
 class _MyHomePageState extends State<MyHomePage> {
   // Функция для обработки нажатия на кнопку
-  void _onButtonPressed(String text, int preset) {
+  void _onButtonPressed(String text, VibePreset preset) {
     // ScaffoldMessenger — стандартный способ показать SnackBar (сообщение)
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(text)),
@@ -67,23 +72,23 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center, // Центрируем по вертикали
           children: [
             ElevatedButton(
-              onPressed: () => _onButtonPressed('Первый', 1),
+              onPressed: () => _onButtonPressed('Первый', VibePreset.symb1),
               child: const Text('1'),
             ),
             ElevatedButton(
-              onPressed: () => _onButtonPressed('Второй', 2),
+              onPressed: () => _onButtonPressed('Второй', VibePreset.symb2),
               child: const Text('2'),
             ),
             ElevatedButton(
-              onPressed: () => _onButtonPressed('Третий', 3),
+              onPressed: () => _onButtonPressed('Третий', VibePreset.symb3),
               child: const Text('3'),
             ),
             ElevatedButton(
-              onPressed: () => _onButtonPressed('Четвёртый', 4),
+              onPressed: () => _onButtonPressed('Четвёртый', VibePreset.symb4),
               child: const Text('4'),
             ),
             ElevatedButton(
-              onPressed: () => _onButtonPressed('Пятый', 5),
+              onPressed: () => _onButtonPressed('Пятый', VibePreset.symb5),
               child: const Text('5'),
             ),
           ],

@@ -1,6 +1,14 @@
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:vibration/vibration.dart';
 import 'package:vibration/vibration_presets.dart';
+
+/// Пресеты вибросигнализатора
+enum VibePreset {
+  startApp,       // Старт приложения
+  criticalError,  // Приложение не сможет работать
+  // Произвольные пресеты для тестирования
+  symb1, symb2, symb3, symb4, symb5,
+}
 
 /// Класс для управления вибросигнализатором
 class VibeDevice {
@@ -26,35 +34,42 @@ class VibeDevice {
   bool get isAmpEnabled => _isAmpEnabled;
   bool get isPatternsEnabled => _isPatternsEnabled;
 
-  void vibratePreset({required int preset}) {
+  /// Вибрация заданными шаблонами
+  void vibratePreset({required VibePreset preset}) {
     switch (preset) {
-      case 1:
-        Vibration.vibrate(duration: 1000); // вибрация одну секунду: всегда для теста
-        debugPrint('duration: 1000');
+      case VibePreset.symb1:
+        // Всегда простая вибрация - для тестирования
+        Vibration.vibrate(duration: 1000);
         break;
-      case 2:
-        Vibration.vibrate(duration: 2000, amplitude: 96); // средняя сила вибрации
-        debugPrint('duration: 2000, amplitude: 96');
+      case VibePreset.symb2:
+        // Второй тест на изменение амплитуды
+        Vibration.vibrate(duration: 2000, amplitude: 96);
         break;
-      case 3:
-        Vibration.vibrate(pattern: [200, 300, 200, 300, 200, 300]);
-        debugPrint('pattern: [200, 300, 200, 300, 200, 300]');
+      case VibePreset.symb3:
+        // Сложные вибрации с преимущественно короткими сигналами
+        Vibration.vibrate(pattern: [70, 120, 70, 120, 70, 120]);
         break;
-      case 4:
+      case VibePreset.symb4:
+        // Сложные вибрации
         Vibration.vibrate(
-          pattern: [200, 400, 200, 600, 200, 800, 200, 1000],
+          pattern: [100, 400, 100, 200, 100, 400, 100, 200],
           intensities: [50, 128, 200, 250],
         );
-        debugPrint('pattern: [200, 400, 200, 600, 200, 800, 200, 1000],\nintensities: [50, 128, 200, 250]');
         break;
-      case 5:
-        // Готовые паттерны singleShortBuzz, doubleBuzz, heartbeatVibration, emergencyAlert
-        Vibration.vibrate(preset: VibrationPreset.emergencyAlert);
-        debugPrint('preset: VibrationPreset.emergencyAlert');
+      case VibePreset.symb5:
+        // Готовые паттерны из пакета: singleShortBuzz, doubleBuzz, heartbeatVibration, emergencyAlert
+        Vibration.vibrate(preset: VibrationPreset.heartbeatVibration);
+        break;
+      case VibePreset.startApp:
+        // Сигнал о загрузке приложения
+        Vibration.vibrate(duration: 5000);
+        break;
+      case VibePreset.criticalError:
+        // Критическая ошибка
+        Vibration.vibrate(pattern: [100, 200, 100, 200, 100, 200, 100, 200, 100, 200, 100, 200, 100, 200]);
         break;
       default:
         Vibration.vibrate(duration: 5000);
-        debugPrint('Default case: duration: 5000');
     }
   }
 }
