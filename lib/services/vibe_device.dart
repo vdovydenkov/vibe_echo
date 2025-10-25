@@ -2,6 +2,7 @@
 
 import 'package:vibration/vibration.dart';
 import 'package:vibration/vibration_presets.dart';
+import 'package:logger/logger.dart';
 
 /// Пресеты вибросигнализатора
 enum VibePreset {
@@ -20,6 +21,9 @@ class VibeDevice {
   /// Умеет ли ли управляться кастомными паттернами (пресетами)
   bool _isPatternsEnabled = false;
 
+  // Если так и останется null - лог не ведём.
+  Logger? selfLogger;
+
   VibeDevice._();
 
   /// Асинхронный фабричный конструктор
@@ -31,12 +35,14 @@ class VibeDevice {
     return device;
   }
 
+  // Геттеры свойств
   bool get isVibeEnabled => _isVibeEnabled;
   bool get isAmpEnabled => _isAmpEnabled;
   bool get isPatternsEnabled => _isPatternsEnabled;
 
   /// Вибрация заданными шаблонами
   void vibratePreset({required VibePreset preset}) {
+    selfLogger?.i('Vibrate preset ${preset.name}');
     switch (preset) {
       case VibePreset.symb1:
         // Всегда простая вибрация - для тестирования
@@ -69,8 +75,6 @@ class VibeDevice {
         // Критическая ошибка
         Vibration.vibrate(pattern: [100, 200, 100, 200, 100, 200, 100, 200, 100, 200, 100, 200, 100, 200]);
         break;
-      default:
-        Vibration.vibrate(duration: 5000);
     }
   }
 }

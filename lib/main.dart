@@ -18,13 +18,12 @@ void main() async {
   setupDependency<Logger>(myLog);
 
   final vibeDevice = await VibeDevice.create();
+  vibeDevice.selfLogger = myLog;
   setupDependency<VibeDevice>(vibeDevice);
 
-  // Запускаем корневой виджет MyApp
   runApp(MyApp());
 }
 
-// Корневой виджет
 class MyApp extends StatelessWidget {
   
   const MyApp({super.key});
@@ -49,12 +48,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Функция для обработки нажатия на кнопку
   void _onButtonPressed(String text, VibePreset preset) {
-    final vibe = getDependency<VibeDevice>();
+    // Достаём синглтоны: логгер и устройство
+    final myLog      = getDependency<Logger>();
+    final vibeDevice = getDependency<VibeDevice>();
+
     // ScaffoldMessenger — стандартный способ показать SnackBar (сообщение)
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(text)),
     );
-    vibe.vibratePreset(preset: preset);
+    myLog.i('Button pressed...');
+    vibeDevice.vibratePreset(preset: preset);
     // widget.vibeDevice.vibratePreset(preset: preset);
   }
 
