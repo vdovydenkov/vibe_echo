@@ -1,4 +1,5 @@
-// import 'package:flutter/foundation.dart';
+// lib/services/vibe_device.dart
+
 import 'package:vibration/vibration.dart';
 import 'package:vibration/vibration_presets.dart';
 

@@ -1,3 +1,5 @@
+// lib/core/logger_config.dart
+
 import 'package:logger/logger.dart';
 
 /// Настраивает собственный логгер

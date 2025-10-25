@@ -1,3 +1,5 @@
+// lib/main.dart
+
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -16,32 +18,28 @@ void main() async {
   setupDependency<Logger>(myLog);
 
   final vibeDevice = await VibeDevice.create();
-  // 
   setupDependency<VibeDevice>(vibeDevice);
 
   // Запускаем корневой виджет MyApp
-  runApp(MyApp(vibeDevice: vibeDevice));
+  runApp(MyApp());
 }
 
 // Корневой виджет
 class MyApp extends StatelessWidget {
-  final VibeDevice vibeDevice;
   
-  const MyApp({super.key, required this.vibeDevice});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Vibe Echo',
-      home: MyHomePage(vibeDevice: vibeDevice),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  final VibeDevice vibeDevice;
-
-  const MyHomePage({super.key, required this.vibeDevice});
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -51,11 +49,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Функция для обработки нажатия на кнопку
   void _onButtonPressed(String text, VibePreset preset) {
+    final vibe = getDependency<VibeDevice>();
     // ScaffoldMessenger — стандартный способ показать SnackBar (сообщение)
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(text)),
     );
-    widget.vibeDevice.vibratePreset(preset: preset);
+    vibe.vibratePreset(preset: preset);
+    // widget.vibeDevice.vibratePreset(preset: preset);
   }
 
   @override
