@@ -40,6 +40,11 @@ class VibeDevice {
   bool get isAmpEnabled => _isAmpEnabled;
   bool get isPatternsEnabled => _isPatternsEnabled;
 
+  /// Останавливает вибрацию
+  void stop() {
+    Vibration.cancel();
+  }
+  
   /// Вибрация заданными шаблонами
   void vibratePreset({required VibePreset preset}) {
     selfLogger?.i('Vibrate preset ${preset.name}');
