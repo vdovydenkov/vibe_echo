@@ -47,12 +47,14 @@ class HomeScreen extends StatefulWidget {
 
 // Состояние главной страницы
 class _HomeScreenState extends State<HomeScreen> {
+  // Достаём синглтоны: логгер и устройство
+  final myLog      = getDependency<Logger>();
+  final vibeDevice = getDependency<VibeDevice>();
+  
+  String _mainText = 'Добро пожаловать';
+
   // Функция для обработки нажатия на кнопку
   void _onButtonPressed(String text, VibePreset preset) {
-    // Достаём синглтоны: логгер и устройство
-    final myLog      = getDependency<Logger>();
-    final vibeDevice = getDependency<VibeDevice>();
-
     // ScaffoldMessenger — стандартный способ показать SnackBar (сообщение)
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(text)),
@@ -69,33 +71,56 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text(appTitle),
       ),
       // Тело экрана
-      body: Center(
-        // Column — вертикальное расположение кнопок
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Центрируем по вертикали
-          children: [
-            ElevatedButton(
-              onPressed: () => _onButtonPressed('Первый', VibePreset.symb1),
-              child: const Text('1'),
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween, // пространство между текстом и кнопками
+        crossAxisAlignment: CrossAxisAlignment.center,      // выравниваем по вертикали
+        children: [
+          // Левая часть — текстовое поле
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start, // прижимаем к левому краю
+                  children: [
+                    Text(
+                      _mainText,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            ElevatedButton(
-              onPressed: () => _onButtonPressed('Второй', VibePreset.symb2),
-              child: const Text('2'),
-            ),
-            ElevatedButton(
-              onPressed: () => _onButtonPressed('Третий', VibePreset.symb3),
-              child: const Text('3'),
-            ),
-            ElevatedButton(
-              onPressed: () => _onButtonPressed('Четвёртый', VibePreset.symb4),
-              child: const Text('4'),
-            ),
-            ElevatedButton(
-              onPressed: () => _onButtonPressed('Пятый', VibePreset.symb5),
-              child: const Text('5'),
-            ),
-          ],
-        ),
+          ),
+
+          // Правая часть — колонка кнопок
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center, // по вертикали центр
+            crossAxisAlignment: CrossAxisAlignment.end,  // кнопки вправо
+            children: [
+              ElevatedButton(
+                onPressed: () => _onButtonPressed('Первый', VibePreset.symb1),
+                child: const Text('1'),
+              ),
+              ElevatedButton(
+                onPressed: () => _onButtonPressed('Второй', VibePreset.symb2),
+                child: const Text('2'),
+              ),
+              ElevatedButton(
+                onPressed: () => _onButtonPressed('Третий', VibePreset.symb3),
+                child: const Text('3'),
+              ),
+              ElevatedButton(
+                onPressed: () => _onButtonPressed('Четвёртый', VibePreset.symb4),
+                child: const Text('4'),
+              ),
+              ElevatedButton(
+                onPressed: () => _onButtonPressed('Пятый', VibePreset.symb5),
+                child: const Text('5'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
