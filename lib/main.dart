@@ -21,31 +21,32 @@ void main() async {
   vibeDevice.selfLogger = myLog;
   setupDependency<VibeDevice>(vibeDevice);
 
-  runApp(MyApp());
+  vibeDevice.vibratePreset(preset: VibePreset.startApp);
+
+  runApp(const VibeEchoApp());
 }
 
-class MyApp extends StatelessWidget {
-  
-  const MyApp({super.key});
+class VibeEchoApp extends StatelessWidget {
+  const VibeEchoApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Vibe Echo',
-      home: MyHomePage(),
+      home: HomeScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
 // Состояние главной страницы
-class _MyHomePageState extends State<MyHomePage> {
+class _HomeScreenState extends State<HomeScreen> {
   // Функция для обработки нажатия на кнопку
   void _onButtonPressed(String text, VibePreset preset) {
     // Достаём синглтоны: логгер и устройство
@@ -56,9 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(text)),
     );
-    myLog.i('Button pressed...');
+    myLog.i('Button pressed with text: $text');
     vibeDevice.vibratePreset(preset: preset);
-    // widget.vibeDevice.vibratePreset(preset: preset);
   }
 
   @override
