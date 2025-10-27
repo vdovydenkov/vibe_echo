@@ -7,6 +7,7 @@ import 'package:logger/logger.dart';
 import 'package:vibe_echo/services/vibe_device.dart';
 import 'package:vibe_echo/core/logger_config.dart';
 import 'package:vibe_echo/core/di.dart';
+import 'package:vibe_echo/config/configurator.dart';
 
 const appTitle = 'Vibe Echo';
 
@@ -22,6 +23,9 @@ void main() async {
   setupDependency<VibeDevice>(vibeDevice);
 
   vibeDevice.vibratePreset(preset: VibePreset.startApp);
+
+  final Config cfg = Config.instance;
+  setupDependency<Config>(cfg);
 
   runApp(const VibeEchoApp());
 }
