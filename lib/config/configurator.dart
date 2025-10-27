@@ -20,8 +20,8 @@ class Config {
   // Пока значения из констант, позже будет проверка других источников.
 
   /// Возвращает путь к HTML-шаблону панели управления.
-  String get cPanelTemplatePath => default_CPanelTemplatePath;
+  String get cPanelTemplatePath => defaultCPanelTemplatePath;
 
   /// Возвращает порт, на котором доступна панель управления.
-  int get cPanelPort => default_CPanelPort;
+  int get cPanelPort => defaultCPanelPort;
 }
