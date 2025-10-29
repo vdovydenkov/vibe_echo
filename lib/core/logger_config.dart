@@ -1,7 +1,8 @@
 // lib/core/logger_config.dart
-
 import 'package:logger/logger.dart';
 import 'package:flutter/foundation.dart';
+
+const prefix = '[VE]';
 
 /// Класс для вывода через debugPrint
 class DebugPrintOutput extends LogOutput {
@@ -9,7 +10,7 @@ class DebugPrintOutput extends LogOutput {
   void output(OutputEvent event) {
     for (var line in event.lines) {
       // Выводим в debug console
-      debugPrint(line);
+      debugPrint('$prefix $line');
     }
   }
 }
