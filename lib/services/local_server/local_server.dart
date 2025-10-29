@@ -82,10 +82,21 @@ Future<Stream<String>> startControlPanelServer({
           ..headers.contentType = ContentType.html
           ..write(html);
       } else if (req.method == 'POST' && req.uri.path == '/execute') {
-        // Принимаем JSON
+        // Может прийти в json или x-www-form-urlencoded
+        final contentType = req.headers.contentType?.mimeType;
         final body = await utf8.decoder.bind(req).join();
-        final data = json.decode(body);
-        final command = (data['command'] ?? '').toString();
+        late String command;
+
+        if (contentType == 'application/json') {
+          final data = json.decode(body);
+          command = data['command'] ?? '';
+        } else if (contentType == 'application/x-www-form-urlencoded') {
+          final data = Uri.splitQueryString(body);
+          command = data['command'] ?? '';
+        } else {
+          // неизвестный формат — вернуть 415 или 400
+        }
+
 
         // Добавляем команду в поток
         if (command.isNotEmpty) controller.add(command);
