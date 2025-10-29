@@ -22,9 +22,32 @@ const failSafeHtmlTemplate = '''
 </html>
 ''';
 
+/// ControlPanelServer
+/// Содержит поток команд stream,
+/// Метод stop() для остановки сервера и закрытия контроллера,
+/// Свойство host с адресом к Панели управления
+class ControlPanelServer {
+  final Stream<String> stream;
+  final String address;
+
+  final HttpServer _server;
+  final StreamController<String> _controller;
+
+  ControlPanelServer._(
+    this._server,
+    this._controller,
+    this.address,
+  ) : stream = _controller.stream;
+
+  Future<void> stop() async {
+    await _server.close(force: true);
+    await _controller.close();
+  }
+} 
+
 /// Запускает локальный HTTP-сервер панели управления Vibe Echo.
 /// Возвращает `Stream<String>` с командами, приходящими из формы.
-Future<Stream<String>> startControlPanelServer({
+Future<ControlPanelServer> startControlPanelServer({
   String  htmlTemplatePath = '',
   int     port             = 8080,
   Logger? extLog,
@@ -47,8 +70,6 @@ Future<Stream<String>> startControlPanelServer({
 
   logCollector += 'Raw html template: \n$htmlTemplate\n';
 
-  // Формируем страницу с подстановкой адреса и порта
-  // Для мобильного устройства лучше использовать локальный IP (Wi-Fi)
   final interfaces = await NetworkInterface.list(type: InternetAddressType.IPv4);
   logCollector += 'interfaces: $interfaces\n';
   
@@ -58,6 +79,7 @@ Future<Stream<String>> startControlPanelServer({
           .firstWhere((a) => !a.startsWith('127.'), orElse: () => '127.0.0.1');
   logCollector += 'localIp: $localIp\n';
 
+  // Формируем страницу с подстановкой адреса и порта
   final html = htmlTemplate
       .replaceAll('{{HOST}}', localIp)
       .replaceAll('{{PORT}}', port.toString());
@@ -71,7 +93,9 @@ Future<Stream<String>> startControlPanelServer({
 
   // Запускаем сервер
   final server = await HttpServer.bind(host, port);
-  debugPrint('Vibe Echo control panel running on http://$localIp:$port');
+
+  final address = 'http://$localIp:$port';
+  debugPrint('Vibe Echo control panel running on $address');
 
   // Обработка запросов
   server.listen((HttpRequest req) async {
@@ -97,7 +121,6 @@ Future<Stream<String>> startControlPanelServer({
           // неизвестный формат — вернуть 415 или 400
         }
 
-
         // Добавляем команду в поток
         if (command.isNotEmpty) controller.add(command);
 
@@ -116,5 +139,5 @@ Future<Stream<String>> startControlPanelServer({
     }
   });
 
-  return controller.stream;
+  return ControlPanelServer._(server, controller, address);
 }

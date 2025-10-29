@@ -28,16 +28,6 @@ void main() async {
   final Config cfg = Config.instance;
   setupDependency<Config>(cfg);
 
-  final commands = await startControlPanelServer(
-    htmlTemplatePath: cfg.cPanelTemplatePath,
-    port:             cfg.cPanelPort,
-    extLog:           myLog,
-  );
-
-  commands.listen((cmd) {
-    myLog.i('Пришло с CPanel: $cmd');
-  });
-
   runApp(const VibeEchoApp());
 }
 
@@ -65,8 +55,46 @@ class _HomeScreenState extends State<HomeScreen> {
   // Достаём синглтоны: логгер и устройство
   final myLog      = getDependency<Logger>();
   final vibeDevice = getDependency<VibeDevice>();
+  final cfg        = getDependency<Config>();
   
   String _mainText = 'Добро пожаловать';
+
+  late ControlPanelServer _cPanelServer;
+
+  @override
+  void initState() {
+    super.initState();
+    _startServer();
+  }
+
+  Future<void> _startServer() async {
+    _cPanelServer = await startControlPanelServer(
+      htmlTemplatePath: cfg.cPanelTemplatePath,
+      port:             cfg.cPanelPort,
+      extLog:           myLog,
+    );
+
+    if (mounted) {
+      setState(() {
+        _mainText += '\nПанель управления доступна по адресу:\n${_cPanelServer.address}';
+      });
+    }
+
+    _cPanelServer.stream.listen((cmd) {
+      myLog.i('Пришло с CPanel: $cmd');
+      if (mounted) {
+        setState(() {
+          _mainText += '\nCP: $cmd';
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _cPanelServer.stop();
+    super.dispose();
+  }
 
   // Функция для обработки нажатия на кнопку
   void _onButtonPressed(String text, VibePreset preset) {
