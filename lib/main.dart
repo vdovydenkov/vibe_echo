@@ -8,6 +8,7 @@ import 'package:vibe_echo/services/vibe_device.dart';
 import 'package:vibe_echo/core/logger_config.dart';
 import 'package:vibe_echo/core/di.dart';
 import 'package:vibe_echo/config/configurator.dart';
+import 'package:vibe_echo/services/local_server/local_server.dart';
 
 const appTitle = 'Vibe Echo';
 
@@ -26,6 +27,16 @@ void main() async {
 
   final Config cfg = Config.instance;
   setupDependency<Config>(cfg);
+
+  final commands = await startControlPanelServer(
+    htmlTemplatePath: cfg.cPanelTemplatePath,
+    port:             cfg.cPanelPort,
+    extLog:           myLog,
+  );
+
+  commands.listen((cmd) {
+    myLog.i('Пришло с CPanel: $cmd');
+  });
 
   runApp(const VibeEchoApp());
 }
