@@ -59,17 +59,19 @@ class CmdDispatcher {
     
     // Если начинается с префикса виброкода
     if (cmd.startsWith(_cfg.vibroCodePrefix)) {
-      // Отправляем строку на вибрацию, отрезав первый символ префикса
+      // Отправляем строку на вибрацию, отрезав символы префикса
       Vibrocode()
-          ..perform(vibroCode: cmd
-          .substring(1),
+          .perform(vibroCode: cmd
+          .substring(_cfg.vibroCodePrefix.length),
       );
+
       // Всё OK, дальнейших действий не требуется
       r.action = ActionValues.ok;
       r.text = '';
       return r;
     }
 
+    // Разбираем команды
     cmd = cmd.trim().toUpperCase();
     switch (cmd) {
       case 'CHECK':
