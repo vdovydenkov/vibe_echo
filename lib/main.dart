@@ -62,6 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late ControlPanelServer _cPanelServer;
 
+  final CmdDispatcher cPanelCommandDispatcher = CmdDispatcher();
+
   @override
   void initState() {
     super.initState();
@@ -86,19 +88,23 @@ class _HomeScreenState extends State<HomeScreen> {
       if (mounted) {
         // Выводим текст команды
         setState(() {
-          _mainText += '\nCP: $cmd';
+          _mainText += '\n$cmd';
         });
 
         // Отправляем на парсинг и исполнение
-        final CmdResult status = await CmdDispatcher.execute(cmd: cmd);
+        final CmdResult status = await cPanelCommandDispatcher.
+            execute(cmd: cmd);
         
         // Будем собирать сюда новый текст основного экрана
         String newMainText = _mainText;
 
         switch (status.action) {
+          case ActionValues.ok:
+            // Что-то он там своё сделал, в этом месте действий не требуется
+            break;
           case ActionValues.append:
             // Добавляем текст к существующему, через перевод строки
-            newMainText += '\n' + status.text;
+            newMainText += '\n${status.text}';
             break;
           case ActionValues.replace:
             // Заменяем текст экрана новым текстом
