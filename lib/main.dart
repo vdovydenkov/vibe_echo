@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:vibe_echo/services/commands/command_dispatcher.dart';
 
 // Собственные модули
 import 'package:vibe_echo/services/vibe_device.dart';
@@ -80,12 +81,41 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
 
-    _cPanelServer.stream.listen((cmd) {
+    _cPanelServer.stream.listen((cmd) async {
       myLog.i('Пришло с CPanel: $cmd');
       if (mounted) {
+        // Выводим текст команды
         setState(() {
           _mainText += '\nCP: $cmd';
         });
+
+        // Отправляем на парсинг и исполнение
+        final CmdResult status = await CmdDispatcher.execute(cmd: cmd);
+        
+        // Будем собирать сюда новый текст основного экрана
+        String newMainText = _mainText;
+
+        switch (status.action) {
+          case ActionValues.append:
+            // Добавляем текст к существующему
+            newMainText += status.text;
+            break;
+          case ActionValues.replace:
+            // Заменяем текст экрана новым текстом
+            newMainText = status.text;
+            break;
+          case ActionValues.error:
+            // Логгируем ошибку и выводим на экран
+            myLog.e(status.text);
+            newMainText += 'Ошибка при выполнении команды:\n${status.text}';
+        }
+
+        // Если текст изменился - обновляем
+        if (newMainText != _mainText) {
+          setState(() {
+            _mainText = newMainText;
+          });
+      }
       }
     });
   }
