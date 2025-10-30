@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:vibe_echo/services/commands/command_dispatcher.dart';
 
 // Собственные модули
 import 'package:vibe_echo/services/vibe_device.dart';
@@ -10,6 +9,7 @@ import 'package:vibe_echo/core/logger_config.dart';
 import 'package:vibe_echo/core/di.dart';
 import 'package:vibe_echo/config/configurator.dart';
 import 'package:vibe_echo/services/local_server/local_server.dart';
+import 'package:vibe_echo/services/commands/command_dispatcher.dart';
 
 const appTitle = 'Vibe Echo';
 
@@ -97,8 +97,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
         switch (status.action) {
           case ActionValues.append:
-            // Добавляем текст к существующему
-            newMainText += status.text;
+            // Добавляем текст к существующему, через перевод строки
+            newMainText += '\n' + status.text;
             break;
           case ActionValues.replace:
             // Заменяем текст экрана новым текстом
