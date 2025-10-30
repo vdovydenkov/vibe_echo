@@ -24,4 +24,7 @@ class Config {
 
   /// Возвращает порт, на котором доступна панель управления.
   int get cPanelPort => defaultCPanelPort;
+
+  /// Возвращает префикс виброкода
+  String get vibroCodePrefix => defaultVibroCodePrefix;
 }
