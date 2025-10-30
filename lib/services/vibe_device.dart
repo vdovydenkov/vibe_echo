@@ -40,7 +40,7 @@ class VibeDevice {
   bool get isAmpEnabled => _isAmpEnabled;
   bool get isPatternsEnabled => _isPatternsEnabled;
 
-  String StatusText() => '''
+  String statusText() => '''
 Устройство поддерживает:
   Вибромотор ${isVibeEnabled?     'Да' : 'Нет'}
   Амплитуда  ${isAmpEnabled?      'Да' : 'Нет'}
