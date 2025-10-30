@@ -26,7 +26,7 @@ class VibeDevice {
 
   VibeDevice._();
 
-  /// Асинхронный фабричный конструктор
+  /// Асинхронный встроенный конструктор
   static Future<VibeDevice> create() async {
     var device = VibeDevice._();
     device._isVibeEnabled     = await Vibration.hasVibrator();
@@ -40,11 +40,19 @@ class VibeDevice {
   bool get isAmpEnabled => _isAmpEnabled;
   bool get isPatternsEnabled => _isPatternsEnabled;
 
+  String StatusText() => '''
+Устройство поддерживает:
+  Вибромотор ${isVibeEnabled?     'Да' : 'Нет'}
+  Амплитуда  ${isAmpEnabled?      'Да' : 'Нет'}
+  Паттерны   ${isPatternsEnabled? 'Да' : 'Нет'}
+''';
+
   /// Останавливает вибрацию
   void stop() {
     Vibration.cancel();
   }
   
+
   /// Вибрация заданными шаблонами
   void vibratePreset({required VibePreset preset}) {
     selfLogger?.i('Vibrate preset ${preset.name}');
