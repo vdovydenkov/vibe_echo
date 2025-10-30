@@ -4,6 +4,7 @@ import 'package:vibe_echo/core/di.dart';
 import 'package:vibe_echo/config/configurator.dart';
 import 'package:logger/logger.dart';
 import 'package:vibe_echo/services/commands/handlers.dart';
+import 'package:vibe_echo/vibe_language/vibe_language.dart';
 
 /// Возможные значение после разбора команды
 enum ActionValues {
@@ -58,7 +59,11 @@ class CmdDispatcher {
     
     // Если начинается с префикса виброкода
     if (cmd.startsWith(_cfg.vibroCodePrefix)) {
-      // Здесь будет вызов транслятора виброкода
+      // Отправляем строку на вибрацию, отрезав первый символ префикса
+      Vibrocode()
+          ..perform(vibroCode: cmd
+          .substring(1),
+      );
       // Всё OK, дальнейших действий не требуется
       r.action = ActionValues.ok;
       r.text = '';
