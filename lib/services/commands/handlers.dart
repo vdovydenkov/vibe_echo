@@ -9,3 +9,4 @@ import 'package:vibe_echo/services/commands/command_dispatcher.dart';
 
 part 'check_handler.dart';
 part 'clear_handler.dart';
+part 'stop_handler.dart';

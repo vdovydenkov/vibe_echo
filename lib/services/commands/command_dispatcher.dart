@@ -58,6 +58,7 @@ class CmdDispatcher {
     
     // Если начинается с префикса виброкода
     if (cmd.startsWith(_cfg.vibroCodePrefix)) {
+      // Здесь будет вызов транслятора виброкода
       // Всё OK, дальнейших действий не требуется
       r.action = ActionValues.ok;
       r.text = '';
@@ -67,10 +68,16 @@ class CmdDispatcher {
     cmd = cmd.trim().toUpperCase();
     switch (cmd) {
       case 'CHECK':
+        // Проверка возможностей вибросигнализатора
         r = checkHandler();
         break;
       case 'CLEAR':
+        // Очистка экрана
         r = clearHandler();
+        break;
+      case 'STOP':
+        // Остановка вибрации
+        r = stopHandler();
         break;
     }
 
