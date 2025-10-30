@@ -30,12 +30,12 @@
     <form id="ctrlForm" onsubmit="return sendCommand();">
       <div class="row">
         <input id="cmdInput" class="cmd" type="text" name="command" autocomplete="off"
-               placeholder="введите команду и нажмите Отправить" aria-label="Команда" />
-        <button type="submit" class="send" id="sendBtn">Отправить</button>
+               placeholder="" aria-label="Команда" />
+        <button type="submit" class="send" id="sendBtn">Отправить (Enter)</button>
       </div>
     </form>
 
-    <div class="hint">Enter — отправить. Ответ сервера отображается ниже.</div>
+    <div class="hint">Ответ сервера отображается ниже.</div>
     <div id="response" class="response" aria-live="polite"></div>
   </div>
 
