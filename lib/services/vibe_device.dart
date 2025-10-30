@@ -53,6 +53,11 @@ class VibeDevice {
   }
   
 
+  /// Вибрация паттерном
+  void vibratePattern({required List<int> customPattern}) {
+    Vibration.vibrate(pattern: customPattern);
+  }
+  
   /// Вибрация заданными шаблонами
   void vibratePreset({required VibePreset preset}) {
     selfLogger?.i('Vibrate preset ${preset.name}');
