@@ -24,7 +24,11 @@ class Vibrocode {
   // Вынимаем из DI в конструкторе
   late final VibeDevice _vbDev;
 
+<<<<<<< HEAD
   Vibrocode() {
+=======
+  Vibrocode(this._vbDev) {
+>>>>>>> 04d239704dec5e4d007dd7ed08ab6d7edb241914
     // Исключение не отлавливается - без вибросигнализатора класс смысла не имеет
     _vbDev = getDependency<VibeDevice>();
   }
