@@ -10,6 +10,6 @@ const int defaultCPanelPort = 3711;
 
 // ---------- Константы вибросигнального языка
 /// Префикс последовательности специального виброкода
-const String vibroCodePrefix = '~';
+const String defaultVibroCodePrefix = '~';
 
 
