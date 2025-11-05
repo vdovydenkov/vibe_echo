@@ -15,6 +15,7 @@ library;
 import 'package:vibe_echo/core/di.dart';
 import 'package:vibe_echo/services/vibe_device.dart';
 import 'package:vibe_echo/config/configurator.dart';
+import 'package:vibe_echo/utils/extractors.dart';
 
 /// Класс для работы с виброкодом.
 /// Виброкод - последовательность тегов, транслируемой в вибросигналы
@@ -65,12 +66,10 @@ class Vibrocode {
       prefix = code[0];
       switch (prefix) {
         case 'V':  // Вибрация
-          // Разбираем код, вытаскиваем из него число после V
-          final match = RegExp(r'V(\d+)')
-              .firstMatch(code);
-          final int? value = match != null ? int.tryParse(match.group(1)!) : null;
+          // Извлекаем число после V
+          final int? value = extractInt(after: 'V', source: code);
 
-          // Числа не вытащили, делать нечего
+          // Числа не вытащили, уходим
           if (value == null) break;
 
           // Вставляем текущее значение паузы
@@ -79,11 +78,8 @@ class Vibrocode {
           vbPattern.add(value);
           break;
         case 'P':  // Пауза
-          // Разбираем код, вытаскиваем из него число после P
-          final match = RegExp(r'P(\d+)')
-              .firstMatch(code);
-          final int? value = match != null ? int.tryParse(match.group(1)!) : null;
-          priorPause = value ?? priorPause;
+          // Извлекаем число после P, если не получилось - оставляем паузу как есть
+          priorPause = extractInt(after: 'P', source: code) ?? priorPause;
 
           break;
       }
