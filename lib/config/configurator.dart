@@ -23,8 +23,10 @@ class Config {
   String get cPanelTemplatePath => defaultCPanelTemplatePath;
 
   /// Возвращает порт, на котором доступна панель управления.
-  int get cPanelPort => defaultCPanelPort;
+  int    get cPanelPort         => defaultCPanelPort;
 
   /// Возвращает префикс виброкода
-  String get vibroCodePrefix => defaultVibroCodePrefix;
+  String get vibroCodePrefix    => defaultVibroCodePrefix;
+  /// Возвращает размер паузы между вибросигналами (в миллисекундах)
+  int    get vibroPause         => defaultVibroPause;
 }

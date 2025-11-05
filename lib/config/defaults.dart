@@ -11,5 +11,6 @@ const int defaultCPanelPort = 3711;
 // ---------- Константы вибросигнального языка
 /// Префикс последовательности специального виброкода
 const String defaultVibroCodePrefix = '~';
-
+/// Пауза между сигналами (в миллисекундах)
+const int defaultVibroPause = 200;
 
