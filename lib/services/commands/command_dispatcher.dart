@@ -26,8 +26,9 @@ class CmdResult {
 
 /// Диспетчер (разборщик) команд
 class CmdDispatcher {
-  late final Config  _cfg;
-  late final Logger? _log;
+  // Сюда будем извлекать DI
+  late final Config      _cfg;
+  late final Logger?     _log;
   
   CmdDispatcher() {
     // Пробуем вынуть логгер, иначе - null
@@ -42,12 +43,15 @@ class CmdDispatcher {
       _cfg = getDependency<Config>();
     } catch (e) {
       _log?.e(e.toString());
+      // Заполняем значениями по умолчанию
       _cfg = Config.instance;
     }
   }
 
   /// Парсит и выполняет команду.
-  /// Возвращает actionValues action и String text.
+  /// Возвращает 
+  /// actionValues action - обновить, переписать текст или ничего не делать;
+  /// String       text   - текстовое содержание.
   Future<CmdResult> execute({
     required String cmd
   }) async {
@@ -58,11 +62,11 @@ class CmdDispatcher {
     if (cmd.isEmpty) return r;
     
     // Если начинается с префикса виброкода
-    if (cmd.startsWith(_cfg.vibroCodePrefix)) {
+    if (cmd.startsWith(_cfg.vbOpt.codePrefix)) {
       // Отправляем строку на вибрацию, отрезав символы префикса
       Vibrocode()
           .perform(vibroCode: cmd
-          .substring(_cfg.vibroCodePrefix.length),
+          .substring(_cfg.vbOpt.codePrefix.length),
       );
 
       // Всё OK, дальнейших действий не требуется

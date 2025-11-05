@@ -4,6 +4,7 @@
 // приложения.
 
 import 'package:vibe_echo/config/defaults.dart';
+import 'package:vibe_echo/config/vibe_options.dart';
 
 class Config {
   // Приватный конструктор — предотвращает создание
@@ -12,21 +13,23 @@ class Config {
 
   // Статическое поле с единственным экземпляром класса.
   static final Config _instance = Config._internal();
-
   // Публичный геттер, возвращающий единственный экземпляр.
   static Config get instance => _instance;
+
+  // Опции вибросигнализации
+  VibeOptions? _vbOpt;
 
   // Геттеры значений.
   // Пока значения из констант, позже будет проверка других источников.
 
   /// Возвращает путь к HTML-шаблону панели управления.
-  String get cPanelTemplatePath => defaultCPanelTemplatePath;
+  String      get cPanelTemplatePath => defaultCPanelTemplatePath;
 
   /// Возвращает порт, на котором доступна панель управления.
-  int    get cPanelPort         => defaultCPanelPort;
+  int         get cPanelPort         => defaultCPanelPort;
 
-  /// Возвращает префикс виброкода
-  String get vibroCodePrefix    => defaultVibroCodePrefix;
-  /// Возвращает размер паузы между вибросигналами (в миллисекундах)
-  int    get vibroPause         => defaultVibroPause;
+  /// Опции вибросигнализации
+  VibeOptions get vbOpt              => _vbOpt ??= VibeOptions()
+    ..codePrefix = defaultVibroCodePrefix
+    ..internalPause = defaultVibroPause;
 }

@@ -3,7 +3,7 @@
 /// Набор настроек для трансляции вибросигналов
 class VibeOptions {
   /// С чего начинается последовательность кодов
-  String codePrefix    = '~';
+  late String codePrefix;
   /// Пауза между сигналами внутри символа
-  int    internalPause = 200;
+  late int    internalPause;
 }

@@ -14,6 +14,7 @@ library;
 
 import 'package:vibe_echo/core/di.dart';
 import 'package:vibe_echo/services/vibe_device.dart';
+import 'package:vibe_echo/config/configurator.dart';
 
 /// Класс для работы с виброкодом.
 /// Виброкод - последовательность тегов, транслируемой в вибросигналы
@@ -24,12 +25,17 @@ class Vibrocode {
   // Вынимаем из DI в конструкторе
   late final VibeDevice _vbDev;
 
+  // Конфигурация - прежде всего, vbOpt
+  late final Config     _cfg;
+
+  /// В конструкторе вынемаем VibeDevice и Config из DI
   Vibrocode() {
     // Исключение не отлавливается - без вибросигнализатора класс смысла не имеет
     _vbDev = getDependency<VibeDevice>();
+    _cfg   = getDependency<Config>();
   }
 
-  void perform({required String vibroCode}) {
+  void perform({required String vibroCode, required }) {
     vibroCode = vibroCode.trim();
 
     if (vibroCode.isEmpty) return;
@@ -41,10 +47,13 @@ class Vibrocode {
         .where((s) => s.trim().isNotEmpty)
         .toList();
 
-    // Префикс кода: V, P, R и т.д.
+    // Признак кода: V, P, R и т.д.
     String prefix;
-    // Предыдущий префикс
+    // Предыдущий признак-префикс
     String priorPrefix = '';
+    // Предыдущее значение паузы сначала берем по умолчанию
+    int priorPause = _cfg.vbOpt.internalPause;
+
     // Счетчик кодов - для лога
     // int    counter = 1;
     // Список для vibration pattern
@@ -61,16 +70,21 @@ class Vibrocode {
               .firstMatch(code);
           final int? value = match != null ? int.tryParse(match.group(1)!) : null;
 
-          // Числа не вытащили
+          // Числа не вытащили, делать нечего
           if (value == null) break;
 
-          // Если предыдущее значение не было паузой,
-          if (priorPrefix != 'P') {
-            // Вставляем паузу по умолчанию
-            vbPattern.add(50);
-          }
+          // Вставляем текущее значение паузы
+          vbPattern.add(priorPause);
           // Вставляем вибрацию заданной длительности
           vbPattern.add(value);
+          break;
+        case 'P':  // Пауза
+          // Разбираем код, вытаскиваем из него число после P
+          final match = RegExp(r'P(\d+)')
+              .firstMatch(code);
+          final int? value = match != null ? int.tryParse(match.group(1)!) : null;
+          priorPause = value ?? priorPause;
+
           break;
       }
 
