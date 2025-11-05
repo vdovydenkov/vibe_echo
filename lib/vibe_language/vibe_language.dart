@@ -36,10 +36,12 @@ class Vibrocode {
     _cfg   = getDependency<Config>();
   }
 
-  void perform({required String vibroCode, required }) {
+  /// Транслирует виброкод в паттерны для вибросигнализатора
+  /// Возвращает List со списком пауз и вибросигналов
+  List<int> parseToPattern({required String vibroCode}) {
     vibroCode = vibroCode.trim();
 
-    if (vibroCode.isEmpty) return;
+    if (vibroCode.isEmpty) return [];
 
     // Разбираем строку по блокам - сепаратор любое кол-во пробелов
     final List<String> codes = vibroCode
@@ -50,13 +52,9 @@ class Vibrocode {
 
     // Признак кода: V, P, R и т.д.
     String prefix;
-    // Предыдущий признак-префикс
-    String priorPrefix = '';
     // Предыдущее значение паузы сначала берем по умолчанию
     int priorPause = _cfg.vbOpt.internalPause;
 
-    // Счетчик кодов - для лога
-    // int    counter = 1;
     // Список для vibration pattern
     List<int> vbPattern = [];
 
@@ -83,13 +81,18 @@ class Vibrocode {
 
           break;
       }
-
-      // counter++;
     }
 
-    if (vbPattern.isNotEmpty) {
-      _vbDev.vibratePattern(customPattern: vbPattern);
-    }
+    return vbPattern;
+  }
+  
+  /// Транслирует и проигрывает виброкод
+  void perform({required String source}) {
+    // Разбираем строку кодов в список — паттерны для вибросигнализатора
+    // И сразу "проигрываем" на устройстве
+    _vbDev.vibratePattern(
+      customPattern: parseToPattern(
+      vibroCode: source));
   }
 }
 

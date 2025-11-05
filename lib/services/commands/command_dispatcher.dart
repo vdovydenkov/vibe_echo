@@ -65,7 +65,7 @@ class CmdDispatcher {
     if (cmd.startsWith(_cfg.vbOpt.codePrefix)) {
       // Отправляем строку на вибрацию, отрезав символы префикса
       Vibrocode()
-          .perform(vibroCode: cmd
+          .perform(source: cmd
           .substring(_cfg.vbOpt.codePrefix.length),
       );
 
