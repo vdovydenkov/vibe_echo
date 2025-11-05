@@ -54,6 +54,8 @@ class Vibrocode {
     String prefix;
     // Предыдущее значение паузы сначала берем по умолчанию
     int priorPause = _cfg.vbOpt.internalPause;
+    // Длина повторяемой цепочки
+    int chainLength = 0;
 
     // Список для vibration pattern
     List<int> vbPattern = [];
@@ -65,6 +67,7 @@ class Vibrocode {
       switch (prefix) {
         case 'V':  // Вибрация
           // Извлекаем число после V
+          // Длительность вибросигнала в мс
           final int? value = extractInt(after: 'V', source: code);
 
           // Числа не вытащили, уходим
@@ -74,11 +77,42 @@ class Vibrocode {
           vbPattern.add(priorPause);
           // Вставляем вибрацию заданной длительности
           vbPattern.add(value);
+          // Увеличиваем размер цепочки для повтора, если потребуется повторить
+          chainLength++;
           break;
         case 'P':  // Пауза
           // Извлекаем число после P, если не получилось - оставляем паузу как есть
           priorPause = extractInt(after: 'P', source: code) ?? priorPause;
 
+          break;
+        case 'R':  // Повтор последнего отрезка
+          // Извлекаем число после R
+          // Количество повторов последнего отрезка
+          final int? cycle = extractInt(after: 'R', source: code);
+
+          // Числа не вытащили или повторять нечего, уходим
+          if ((cycle == null) || (chainLength == 0))
+            break;
+
+          if (2 * chainLength > vbPattern.length) {
+            // Почему-то размер цепочки оказался больше списка
+            // Повод для логгирования
+            chainLength = 0;
+            break;
+          }
+
+          // Повторяем последний отрезок заданное количество раз
+          for (var i = 1; i < cycle; i++) {
+            // Извлекаем из списка последние 2 * chainLength элементов
+            // И снова добавляем к списку.
+            // (два размера, потому что пауза + вибрация)
+            vbPattern.addAll(
+              vbPattern.sublist(
+                vbPattern.length - (2 * chainLength)
+            ));
+          }
+          // Обнуляем размер повторяемой цепочки
+          chainLength = 0;
           break;
       }
     }
