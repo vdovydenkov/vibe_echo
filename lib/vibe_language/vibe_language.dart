@@ -12,6 +12,8 @@
 /// Vibrosign (вибросимвол) - паттерн: набор вибросигналов, закрепленных за смыслом
 library;
 
+import 'dart:ffi';
+
 import 'package:vibe_echo/core/di.dart';
 import 'package:vibe_echo/services/vibe_device.dart';
 import 'package:vibe_echo/config/configurator.dart';
@@ -56,6 +58,8 @@ class Vibrocode {
     int priorPause = _cfg.vbOpt.internalPause;
     // Длина повторяемой цепочки
     int chainLength = 0;
+    // Скорость: коэффициент, на который умножаются длительности
+    double speed = 1;
 
     // Список для vibration pattern
     List<int> vbPattern = [];
@@ -75,14 +79,16 @@ class Vibrocode {
 
           // Вставляем текущее значение паузы
           vbPattern.add(priorPause);
-          // Вставляем вибрацию заданной длительности
-          vbPattern.add(value);
+          // Вставляем вибрацию заданной длительности, умноженную на скорость
+          vbPattern.add((value * speed).round());
           // Увеличиваем размер цепочки для повтора, если потребуется повторить
           chainLength++;
           break;
         case 'P':  // Пауза
           // Извлекаем число после P, если не получилось - оставляем паузу как есть
           priorPause = extractInt(after: 'P', source: code) ?? priorPause;
+          // Домножим на скорость
+          priorPause = (priorPause * speed).round();
 
           break;
         case 'R':  // Повтор последнего отрезка
@@ -111,8 +117,22 @@ class Vibrocode {
                 vbPattern.length - (2 * chainLength)
             ));
           }
+
           // Обнуляем размер повторяемой цепочки
           chainLength = 0;
+          break;
+        case 'S':  // Скорость
+          // Извлекаем число после S, если не получилось - сбрасываем в 10
+          // Коэффициент после S должен быть в 10 раз больше speed
+          // Если в коде S10 - speed = 10/10 = 1, если S5 - speed = 5/10 = 0.5
+          final coef = extractInt(after: 'S', source: code) ?? 10;
+          // Проверим диапазон
+          if (coef < 1 && coef > 100) break;
+
+          // Скорость в 10 раз меньше коэффициента
+          speed = coef / 10;
+          // Обновим значение паузы
+          priorPause = (priorPause * speed).round();
           break;
       }
     }
