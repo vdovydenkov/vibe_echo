@@ -12,8 +12,6 @@
 /// Vibrosign (вибросимвол) - паттерн: набор вибросигналов, закрепленных за смыслом
 library;
 
-import 'dart:ffi';
-
 import 'package:vibe_echo/core/di.dart';
 import 'package:vibe_echo/services/vibe_device.dart';
 import 'package:vibe_echo/config/configurator.dart';
@@ -55,11 +53,11 @@ class Vibrocode {
     // Признак кода: V, P, R и т.д.
     String prefix;
     // Предыдущее значение паузы сначала берем по умолчанию
-    int priorPause = _cfg.vbOpt.internalPause;
+    int pause = _cfg.vbOpt.internalPause;
     // Длина повторяемой цепочки
     int chainLength = 0;
     // Скорость: коэффициент, на который умножаются длительности
-    double speed = 1;
+    double speedCoefficient = 1;
 
     // Список для vibration pattern
     List<int> vbPattern = [];
@@ -78,17 +76,17 @@ class Vibrocode {
           if (value == null) break;
 
           // Вставляем текущее значение паузы
-          vbPattern.add(priorPause);
-          // Вставляем вибрацию заданной длительности, умноженную на скорость
-          vbPattern.add((value * speed).round());
+          vbPattern.add(pause);
+          // Вставляем вибрацию заданной длительности, умноженную на коэффициент скорости
+          vbPattern.add((value * speedCoefficient).round());
           // Увеличиваем размер цепочки для повтора, если потребуется повторить
           chainLength++;
           break;
         case 'P':  // Пауза
           // Извлекаем число после P, если не получилось - оставляем паузу как есть
-          priorPause = extractInt(after: 'P', source: code) ?? priorPause;
-          // Домножим на скорость
-          priorPause = (priorPause * speed).round();
+          pause = extractInt(after: 'P', source: code) ?? pause;
+          // Домножим на коэффициент скорости
+          pause = (pause * speedCoefficient).round();
 
           break;
         case 'R':  // Повтор последнего отрезка
@@ -125,14 +123,14 @@ class Vibrocode {
           // Извлекаем число после S, если не получилось - сбрасываем в 10
           // Коэффициент после S должен быть в 10 раз больше speed
           // Если в коде S10 - speed = 10/10 = 1, если S5 - speed = 5/10 = 0.5
-          final coef = extractInt(after: 'S', source: code) ?? 10;
+          final coefficient = extractInt(after: 'S', source: code) ?? 10;
           // Проверим диапазон
-          if (coef < 1 && coef > 100) break;
+          if (coefficient < 1 && coefficient > 100) break;
 
           // Скорость в 10 раз меньше коэффициента
-          speed = coef / 10;
+          speedCoefficient = coefficient / 10;
           // Обновим значение паузы
-          priorPause = (priorPause * speed).round();
+          pause = (pause * speedCoefficient).round();
           break;
       }
     }
