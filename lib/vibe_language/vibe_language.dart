@@ -95,8 +95,9 @@ class Vibrocode {
           final int? cycle = extractInt(after: 'R', source: code);
 
           // Числа не вытащили или повторять нечего, уходим
-          if ((cycle == null) || (chainLength == 0))
+          if ((cycle == null) || (chainLength == 0)) {
             break;
+          }
 
           if (2 * chainLength > vbPattern.length) {
             // Почему-то размер цепочки оказался больше списка
@@ -120,15 +121,32 @@ class Vibrocode {
           chainLength = 0;
           break;
         case 'S':  // Скорость
-          // Извлекаем число после S, если не получилось - сбрасываем в 10
-          // Коэффициент после S должен быть в 10 раз больше speed
-          // Если в коде S10 - speed = 10/10 = 1, если S5 - speed = 5/10 = 0.5
-          final coefficient = extractInt(after: 'S', source: code) ?? 10;
+          // Извлекаем число после S, если не получилось - сбрасываем в 0
+          // Число после S - процент ускорения или замедления
+          // S10 — плюс 10 процентов, S-50 — в половину медленнее (50 процентов)
+          final coefficient = extractInt(after: 'S', source: code) ?? 0;
           // Проверим диапазон
-          if (coefficient < 1 && coefficient > 100) break;
+          if (coefficient < -99 || coefficient > 100) {
+            // Логгируем, что задан ошибочный диапазон
+            break;
+          }
 
-          // Скорость в 10 раз меньше коэффициента
-          speedCoefficient = coefficient / 10;
+          // Рассчитываем коэффициент скорости:
+          // на что нужно домножить длительность и паузу,
+          // чтобы соответствовать установленной скорости
+          if (coefficient < 0) {
+            // Замедляем скорость:
+            // множитель больше единицы, увеличивает длительность вибрации и паузы
+            speedCoefficient = 1 + coefficient / 100;
+          } else if (coefficient > 0) {
+            // Увеличиваем скорость:
+            // множитель меньше единицы, сокращает длительность вибрации и паузы
+            speedCoefficient = 1 - coefficient / 100;
+          } else if (coefficient == 0)  {
+            // Скорость приводим к нормальной
+            speedCoefficient = 1;
+          }
+
           // Обновим значение паузы
           pause = (pause * speedCoefficient).round();
           break;
