@@ -72,8 +72,10 @@ class Vibrocode {
           // Длительность вибросигнала в мс
           final int? value = extractInt(after: 'V', source: code);
 
-          // Числа не вытащили, уходим
-          if (value == null) break;
+          // Число не вытащили, уходим
+          if (value == null) {
+            break;
+          }
 
           // Вставляем текущее значение паузы
           vbPattern.add(pause);
@@ -162,7 +164,9 @@ class Vibrocode {
     // И сразу "проигрываем" на устройстве
     _vbDev.vibratePattern(
       customPattern: parseToPattern(
-      vibroCode: source));
+        vibroCode: source
+      )
+    );
   }
 }
 
