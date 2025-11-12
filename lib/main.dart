@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
             newMainText += '\n${status.text}';
             break;
           case ActionValues.replace:
-            // Заменяем текст экрана новым текстом
+            // Заменяем текст на экране новым текстом
             newMainText = status.text;
             break;
           case ActionValues.error:
