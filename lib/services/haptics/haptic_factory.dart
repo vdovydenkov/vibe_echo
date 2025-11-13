@@ -4,12 +4,14 @@ import 'package:vibe_echo/services/haptics/haptic_interface.dart';
 import 'package:vibe_echo/services/haptics/haptic_simple.dart';
 import 'package:vibe_echo/services/haptics/haptic_advanced.dart';
 
-final hapticMode = String.fromEnvironment(
+const hapticModeRaw = String.fromEnvironment(
   'HAPTIC_MODE',
-  defaultValue: VibeMode.advanced.name,
-).toUpperCase();
+  defaultValue: 'ADVANCED');
 
 Future<HapticEngine> createHapticEngine() async {
+  final hapticMode = hapticModeRaw
+      .trim().toUpperCase();
+
   if (hapticMode == 'ADVANCED') {
     return HapticAdvanced.create();
   } else {
