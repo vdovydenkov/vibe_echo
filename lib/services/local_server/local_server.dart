@@ -68,7 +68,7 @@ Future<ControlPanelServer> startControlPanelServer({
   final host = InternetAddress.anyIPv4;
   logCollector += 'host: $host\n';
 
-  logCollector += 'Raw html template: \n$htmlTemplate\n';
+  logCollector += 'Raw html template length: {$htmlTemplate.length}\n';
 
   final interfaces = await NetworkInterface.list(type: InternetAddressType.IPv4);
   logCollector += 'interfaces: $interfaces\n';
@@ -83,7 +83,7 @@ Future<ControlPanelServer> startControlPanelServer({
   final html = htmlTemplate
       .replaceAll('{{HOST}}', localIp)
       .replaceAll('{{PORT}}', port.toString());
-  logCollector += 'html \n$html\n';
+  logCollector += 'html length: ${html.length}\n';
   
   // Собрали лог, выводим, если передали логгер
   extLog?.d(logCollector);
