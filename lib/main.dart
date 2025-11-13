@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 // Собственные модули
-import 'package:vibe_echo/services/vibe_device.dart';
+import 'package:vibe_echo/services/haptics/haptic_factory.dart';
 import 'package:vibe_echo/core/logger_config.dart';
 import 'package:vibe_echo/core/di.dart';
 import 'package:vibe_echo/config/configurator.dart';
+import 'package:vibe_echo/services/haptics/haptic_interface.dart';
 import 'package:vibe_echo/services/local_server/local_server.dart';
 import 'package:vibe_echo/services/commands/command_dispatcher.dart';
 
@@ -20,11 +21,12 @@ void main() async {
   myLog.i('Starting...');
   setupDependency<Logger>(myLog);
 
-  final vibeDevice = await VibeDevice.create();
+  final vibeDevice = await createHapticEngine();
   vibeDevice.selfLogger = myLog;
-  setupDependency<VibeDevice>(vibeDevice);
+  setupDependency<HapticEngine>(vibeDevice);
+  myLog.i('Vibration mode: ${vibeDevice.mode}');
 
-  vibeDevice.vibratePreset(preset: VibePreset.startApp);
+  vibeDevice.vibratePreset(preset: VibePreset.launched);
 
   final Config cfg = Config.instance;
   setupDependency<Config>(cfg);
@@ -55,7 +57,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // Достаём синглтоны: логгер и устройство
   final myLog      = getDependency<Logger>();
-  final vibeDevice = getDependency<VibeDevice>();
+  final vibeDevice = getDependency<HapticEngine>();
   final cfg        = getDependency<Config>();
   
   String _mainText = 'Добро пожаловать';
@@ -178,23 +180,23 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,  // кнопки вправо
             children: [
               ElevatedButton(
-                onPressed: () => _onButtonPressed('Первый', VibePreset.symb1),
+                onPressed: () => _onButtonPressed('Первый', VibePreset.test1),
                 child: const Text('1'),
               ),
               ElevatedButton(
-                onPressed: () => _onButtonPressed('Второй', VibePreset.symb2),
+                onPressed: () => _onButtonPressed('Второй', VibePreset.test2),
                 child: const Text('2'),
               ),
               ElevatedButton(
-                onPressed: () => _onButtonPressed('Третий', VibePreset.symb3),
+                onPressed: () => _onButtonPressed('Третий', VibePreset.test3),
                 child: const Text('3'),
               ),
               ElevatedButton(
-                onPressed: () => _onButtonPressed('Четвёртый', VibePreset.symb4),
+                onPressed: () => _onButtonPressed('Четвёртый', VibePreset.test4),
                 child: const Text('4'),
               ),
               ElevatedButton(
-                onPressed: () => _onButtonPressed('Пятый', VibePreset.symb5),
+                onPressed: () => _onButtonPressed('Пятый', VibePreset.test5),
                 child: const Text('5'),
               ),
             ],

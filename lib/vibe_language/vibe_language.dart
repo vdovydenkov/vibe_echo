@@ -13,7 +13,7 @@
 library;
 
 import 'package:vibe_echo/core/di.dart';
-import 'package:vibe_echo/services/vibe_device.dart';
+import 'package:vibe_echo/services/haptics/haptic_interface.dart';
 import 'package:vibe_echo/config/configurator.dart';
 import 'package:vibe_echo/utils/extractors.dart';
 
@@ -23,22 +23,22 @@ import 'package:vibe_echo/utils/extractors.dart';
 /// Может выбросить исключение при getDependency
 class Vibrocode {
   // Вибросигнализатор - без него ничего не работает
-  // Вынимаем из DI в конструкторе
-  late final VibeDevice _vbDev;
+  // Будем Вынимать из DI в конструкторе
+  late final HapticEngine _vibeDevice;
 
   // Конфигурация - прежде всего, vbOpt
-  late final Config     _cfg;
+  late final Config _cfg;
 
   /// В конструкторе вынемаем VibeDevice и Config из DI
   Vibrocode() {
     // Исключение не отлавливается - без вибросигнализатора класс смысла не имеет
-    _vbDev = getDependency<VibeDevice>();
-    _cfg   = getDependency<Config>();
+    _vibeDevice = getDependency<HapticEngine>();
+    _cfg = getDependency<Config>();
   }
 
   /// Транслирует виброкод в паттерны для вибросигнализатора
   /// Возвращает List со списком пауз и вибросигналов
-  List<int> parseToPattern({required String vibroCode}) {
+  List<int> parseToList({required String vibroCode}) {
     vibroCode = vibroCode.trim();
 
     if (vibroCode.isEmpty) return [];
@@ -162,8 +162,8 @@ class Vibrocode {
   void perform({required String source}) {
     // Разбираем строку кодов в список — паттерны для вибросигнализатора
     // И сразу "проигрываем" на устройстве
-    _vbDev.vibratePattern(
-      customPattern: parseToPattern(
+    _vibeDevice.vibrateList(
+      timingSequenceList: parseToList(
         vibroCode: source
       )
     );

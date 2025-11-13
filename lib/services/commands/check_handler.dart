@@ -6,7 +6,7 @@ part of 'handlers.dart';
 CmdResult checkHandler() {
   try {
     // Достаем singleton: класс управления виброустройством
-    final vbDev = getDependency<VibeDevice>();
+    final vbDev = getDependency<HapticEngine>();
 
     return CmdResult(
       action: ActionValues.append,

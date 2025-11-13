@@ -6,7 +6,7 @@ part of 'handlers.dart';
 CmdResult stopHandler() {
   try {
     // Пытаемся вынуть синглтон из DI
-    final vbDev = getDependency<VibeDevice>();
+    final vbDev = getDependency<HapticEngine>();
 
     vbDev.stop();
 
