@@ -68,7 +68,7 @@ Future<ControlPanelServer> startControlPanelServer({
   final host = InternetAddress.anyIPv4;
   logCollector += 'host: $host\n';
 
-  logCollector += 'Raw html template length: {$htmlTemplate.length}\n';
+  logCollector += 'Raw html template length: ${htmlTemplate.length}\n';
 
   final interfaces = await NetworkInterface.list(type: InternetAddressType.IPv4);
   logCollector += 'interfaces: $interfaces\n';
