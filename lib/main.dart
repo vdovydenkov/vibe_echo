@@ -56,19 +56,24 @@ class HomeScreen extends StatefulWidget {
 // Состояние главной страницы
 class _HomeScreenState extends State<HomeScreen> {
   // Достаём синглтоны: логгер и устройство
-  final myLog      = getDependency<Logger>();
   final vibeDevice = getDependency<HapticEngine>();
+  final myLog      = getDependency<Logger>();
   final cfg        = getDependency<Config>();
   
-  String _mainText = 'Добро пожаловать';
+  String _mainText = 'ДОБРО ПОЖАЛОВАТЬ';
 
   late ControlPanelServer _cPanelServer;
-
   final CmdDispatcher cPanelCommandDispatcher = CmdDispatcher();
 
   @override
   void initState() {
     super.initState();
+    if (mounted) {
+      setState(() {
+        _mainText += '\nРежим вибрации: ${vibeDevice.mode}';
+      });
+    }
+    
     _startServer();
   }
 
@@ -86,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     _cPanelServer.stream.listen((cmd) async {
-      myLog.i('Пришло с CPanel: $cmd');
+      myLog.d('From CPanel: $cmd');
       if (mounted) {
         // Выводим текст команды
         setState(() {
