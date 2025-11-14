@@ -10,7 +10,7 @@ int? extractInt({
   required String source,
 }) {
   // Вытаскиваем число после экранированного after
-  final match = RegExp('${RegExp.escape(after)}(\\d+)')
+  final match = RegExp('${RegExp.escape(after)}([+-]?\\d+)')
       .firstMatch(source);
   return match != null ? int.tryParse(match.group(1)!) : null;
 }
