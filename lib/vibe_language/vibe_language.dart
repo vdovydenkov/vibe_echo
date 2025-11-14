@@ -12,6 +12,7 @@
 /// Vibrosign (вибросимвол) - паттерн: набор вибросигналов, закрепленных за смыслом
 library;
 
+import 'package:logger/logger.dart';
 import 'package:vibe_echo/core/di.dart';
 import 'package:vibe_echo/services/haptics/haptic_interface.dart';
 import 'package:vibe_echo/config/configurator.dart';
@@ -22,18 +23,22 @@ import 'package:vibe_echo/utils/extractors.dart';
 /// Использует синглтон VibeDevice
 /// Может выбросить исключение при getDependency
 class Vibrocode {
+  // --- Будем Вынимать из DI в конструкторе
   // Вибросигнализатор - без него ничего не работает
-  // Будем Вынимать из DI в конструкторе
   late final HapticEngine _vibeDevice;
-
-  // Конфигурация - прежде всего, vbOpt
-  late final Config _cfg;
+  // Конфигурация: прежде всего, vbOpt
+  late final Config       _cfg;
+  // Внешний логгер. Если не передадут (null) - лога не будет.
+  late final Logger?      _externalLogger;
 
   /// В конструкторе вынемаем VibeDevice и Config из DI
   Vibrocode() {
     // Исключение не отлавливается - без вибросигнализатора класс смысла не имеет
     _vibeDevice = getDependency<HapticEngine>();
-    _cfg = getDependency<Config>();
+    _cfg        = getDependency<Config>();
+
+    // А логгер не критичен, если его нет - просто null
+    _externalLogger = isRegistered<Logger>() ? getDependency<Logger>() : null;
   }
 
   /// Транслирует виброкод в паттерны для вибросигнализатора
@@ -130,6 +135,9 @@ class Vibrocode {
           // Проверим диапазон
           if (coefficient < -99 || coefficient > 100) {
             // Логгируем, что задан ошибочный диапазон
+            _externalLogger?.d(
+              'Speed coefficient ($coefficient) is out of range [-99..100]',
+            );
             break;
           }
 
@@ -139,7 +147,7 @@ class Vibrocode {
           if (coefficient < 0) {
             // Замедляем скорость:
             // множитель больше единицы, увеличивает длительность вибрации и паузы
-            speedCoefficient = 1 + coefficient / 100;
+            speedCoefficient = 1 + coefficient.abs() / 100;
           } else if (coefficient > 0) {
             // Увеличиваем скорость:
             // множитель меньше единицы, сокращает длительность вибрации и паузы
@@ -149,6 +157,10 @@ class Vibrocode {
             speedCoefficient = 1;
           }
 
+          _externalLogger?.d(
+            'speedCoefficient = $speedCoefficient, '
+            'coefficient = $coefficient',
+          );
           // Обновим значение паузы
           pause = (pause * speedCoefficient).round();
           break;
