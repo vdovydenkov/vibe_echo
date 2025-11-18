@@ -109,6 +109,7 @@ class Vibrocode {
         case 'A':  // Амплитуда
           // Извлекаем число после A, если не получилось - оставляем амплитуду
           amplitude = extractInt(after: 'A', source: code) ?? amplitude;
+          break;
         case 'P':  // Пауза
           // Извлекаем число после P, если не получилось - оставляем паузу как есть
           pause = extractInt(after: 'P', source: code) ?? pause;
