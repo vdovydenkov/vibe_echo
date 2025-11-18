@@ -142,7 +142,15 @@ class Vibrocode {
             vbPattern.addAll(
               vbPattern.sublist(
                 vbPattern.length - (2 * chainLength)
-            ));
+              )
+            );
+
+            // Тоже самое для амплитуды
+            amplitudes.addAll(
+              amplitudes.sublist(
+                amplitudes.length - (2 * chainLength)
+              )
+            );
           }
 
           // Обнуляем размер повторяемой цепочки
