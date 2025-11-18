@@ -42,7 +42,18 @@ class HapticSimple extends HapticEngine {
   /// "Проиграть" вибрацию из списка:
   /// список длительностей пауз и вибраций в миллисекундах.
   @override
-  void vibrateList({required List<int> timingSequenceList}) {
+  void vibrateList({
+    required List<int> timingSequenceList,
+    List<int> amplitudes = const [],
+  }) {
+    if (!isAdvancedVibrationAvailable) {
+      selfLogger?.e('Advanced custom support is not available.');
+      return;
+    }
+
+    amplitudes = prepareAmplitudes(amplitudesRaw: amplitudes);
+
+    // Пока без амплитуд
     Vibration.vibrate(pattern: timingSequenceList);
     selfLogger?.d('Timing sequences list containts ${timingSequenceList.length} items.');
   }

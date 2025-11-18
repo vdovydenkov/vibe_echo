@@ -42,11 +42,17 @@ class Vibrocode {
   }
 
   /// Транслирует виброкод в паттерны для вибросигнализатора
-  /// Возвращает List со списком пауз и вибросигналов
-  List<int> parseToList({required String vibroCode}) {
+  /// Возвращает два списка: 
+  /// * список пауз и вибросигналов
+  /// * список амплитуд
+  (List<int>, List<int>) parseToList({
+    required String vibroCode
+  }) {
     vibroCode = vibroCode.trim();
 
-    if (vibroCode.isEmpty) return [];
+    if (vibroCode.isEmpty) {
+      return ([], []);
+    }
 
     // Разбираем строку по блокам - сепаратор любое кол-во пробелов
     final List<String> codes = vibroCode
@@ -64,8 +70,13 @@ class Vibrocode {
     // Скорость: коэффициент, на который умножаются длительности
     double speedCoefficient = 1;
 
-    // Список для vibration pattern
-    List<int> vbPattern = [];
+    // Список для vibration pattern (паузы и вибрация)
+    List<int> vbPattern  = [];
+
+    // Сюда будем заполнять амплитуды для каждой вибрации
+    List<int> amplitudes = [];
+    // Максимальное значение амплитуды - значение по умолчанию
+    int amplitude = 255;
 
     // Преобразуем набор кодов в список pattern из vibration
     // Список из длительностей пауз и вибраций
@@ -84,11 +95,20 @@ class Vibrocode {
 
           // Вставляем текущее значение паузы
           vbPattern.add(pause);
+          // И нулевую амплитуду
+          amplitudes.add(0);
+
           // Вставляем вибрацию заданной длительности, умноженную на коэффициент скорости
           vbPattern.add((value * speedCoefficient).round());
+          // И текущее значение амплитуды для этой вибрации
+          amplitudes.add(amplitude);
+
           // Увеличиваем размер цепочки для повтора, если потребуется повторить
           chainLength++;
           break;
+        case 'A':  // Амплитуда
+          // Извлекаем число после A, если не получилось - оставляем амплитуду
+          amplitude = extractInt(after: 'A', source: code) ?? amplitude;
         case 'P':  // Пауза
           // Извлекаем число после P, если не получилось - оставляем паузу как есть
           pause = extractInt(after: 'P', source: code) ?? pause;
@@ -147,6 +167,7 @@ class Vibrocode {
           if (coefficient < 0) {
             // Замедляем скорость:
             // множитель больше единицы, увеличивает длительность вибрации и паузы
+            // Значение берем по модулю, чтобы не появился минус в выражении
             speedCoefficient = 1 + coefficient.abs() / 100;
           } else if (coefficient > 0) {
             // Увеличиваем скорость:
@@ -167,17 +188,18 @@ class Vibrocode {
       }
     }
 
-    return vbPattern;
+    return (vbPattern, amplitudes);
   }
   
   /// Транслирует и проигрывает виброкод
   void perform({required String source}) {
     // Разбираем строку кодов в список — паттерны для вибросигнализатора
+    final (timings, amplitudes) = parseToList(vibroCode: source);
+
     // И сразу "проигрываем" на устройстве
     _vibeDevice.vibrateList(
-      timingSequenceList: parseToList(
-        vibroCode: source
-      )
+        timingSequenceList: timings,
+        amplitudes: amplitudes,
     );
   }
 }

@@ -43,14 +43,17 @@ class HapticAdvanced extends HapticEngine {
   /// "Проиграть" вибрацию из списка:
   /// список длительностей пауз и вибраций в миллисекундах.
   @override
-  void vibrateList({required List<int> timingSequenceList}) {
-    // Генерируем одинаковую амплитуду для всех сигналов
-    // Для этого на каждую паузу ставим амплитуду 0, а на сигнал - амплитуду 255
-    List<int> amplitudes = [];
-    for (var i = 0; i < timingSequenceList.length ~/ 2; i++) {
-      amplitudes.add(0);
-      amplitudes.add(255);
+  void vibrateList({
+    required List<int> timingSequenceList,
+    List<int> amplitudes = const [],
+  }) {
+    if (!isAdvancedVibrationAvailable) {
+      selfLogger?.e('Advanced custom support is not available.');
+      return;
     }
+
+    amplitudes = prepareAmplitudes(amplitudesRaw: amplitudes);
+
     AdvancedHaptics.playWaveform(
       timingSequenceList,
       amplitudes);

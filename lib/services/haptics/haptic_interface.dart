@@ -41,9 +41,38 @@ abstract class HapticEngine {
   void stop();
 
   /// "Проиграть" вибрацию из списка:
-  /// список длительностей пауз и вибраций в миллисекундах.
-  void vibrateList({required List<int> timingSequenceList});
+  /// timingSequenceList: список длительностей пауз и вибраций в миллисекундах.
+  /// amplitudes:         список амплитуд.
+  void vibrateList({
+    required List<int> timingSequenceList,
+    List<int> amplitudes = const [],
+  });
 
   /// "Проиграть" заданный фиксированный пресет
   void vibratePreset({required VibePreset preset});
+
+  /// Готовит список амплитуд:
+  /// возвращает гарантированно правильный или пустой список
+  List<int> prepareAmplitudes({
+    required List<int> amplitudesRaw,
+    int size = 0,  // Размер финального списка с амплитудами
+  }) {
+    List<int> completeAmplitudes = [];
+
+    // Если амплитуды не заданы, а размер задан
+    if (amplitudesRaw.isEmpty && size > 0) {
+      // Генерируем одинаковую амплитуду для всех сигналов
+      // Для этого на каждую паузу ставим амплитуду 0, а на сигнал - амплитуду 255
+      for (var i = 0; i < size ~/ 2; i++) {
+        completeAmplitudes.add(0);
+        completeAmplitudes.add(255);
+      }
+    } else {
+      // Здесь может быть проверка значений списка на диапазон [0..255]
+      // А пока просто присваиваем значение переданных амплитуд
+      completeAmplitudes = amplitudesRaw;
+    }
+
+    return completeAmplitudes;
+  }
 }
