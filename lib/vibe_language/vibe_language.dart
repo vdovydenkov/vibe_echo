@@ -136,9 +136,8 @@ class Vibrocode {
 
           // Повторяем последний отрезок заданное количество раз
           for (var i = 1; i < cycle; i++) {
-            // Извлекаем из списка последние 2 * chainLength элементов
+            // Извлекаем из списка последние 2 (пауза и вибрация) * chainLength элементов
             // И снова добавляем к списку.
-            // (два размера, потому что пауза + вибрация)
             vbPattern.addAll(
               vbPattern.sublist(
                 vbPattern.length - (2 * chainLength)

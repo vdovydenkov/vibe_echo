@@ -71,7 +71,7 @@ class CmdDispatcher {
 
       // Всё OK, дальнейших действий не требуется
       r.action = ActionValues.ok;
-      r.text = '';
+      r.text   = '';
       return r;
     }
 

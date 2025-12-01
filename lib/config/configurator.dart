@@ -8,7 +8,7 @@ import 'package:vibe_echo/config/vibe_options.dart';
 
 class Config {
   // Приватный конструктор — предотвращает создание
-  // экземпляров извне, обеспечивая шаблон Singleton.
+  // экземпляров извне, обеспечивая Singleton.
   Config._internal();
 
   // Статическое поле с единственным экземпляром класса.
