@@ -6,11 +6,14 @@ library;
 /// Путь к HTML-шаблону панели управления приложением.
 const String defaultCPanelTemplatePath = 'assets/html/cpanel_template.html';
 /// Порт, на котором доступна панель управления.
-const int defaultCPanelPort = 3711;
+const int    defaultCPanelPort         = 3711;
 
 // ---------- Константы вибросигнального языка
 /// Префикс последовательности специального виброкода
-const String defaultVibroCodePrefix = '~';
+const String defaultVibroCodePrefix    = '~';
 /// Пауза между сигналами (в миллисекундах)
-const int defaultVibroPause = 200;
+const int    defaultVibroPause         = 200;
 
+// ---------- Константы разных хранилищ
+/// Имя файла с сохраненными вибросигналами
+const String defaultSymbolsFilename    = 'symbols.json';

@@ -7,14 +7,16 @@ import 'package:vibe_echo/config/defaults.dart';
 import 'package:vibe_echo/config/vibe_options.dart';
 
 class Config {
-  // Приватный конструктор — предотвращает создание
-  // экземпляров извне, обеспечивая Singleton.
-  Config._internal();
+  // Приватный конструктор — предотвращает создание экземпляров извне
+  Config._();
 
   // Статическое поле с единственным экземпляром класса.
-  static final Config _instance = Config._internal();
-  // Публичный геттер, возвращающий единственный экземпляр.
-  static Config get instance => _instance;
+  static final Config instance = Config._();
+
+  /// Загрузка из SharedPreferences
+  Future<void> load() async {
+    // Пока здесь просто заглушка.
+  }
 
   // Опции вибросигнализации
   VibeOptions? _vbOpt;
@@ -32,4 +34,8 @@ class Config {
   VibeOptions get vbOpt              => _vbOpt ??= VibeOptions()
     ..codePrefix = defaultVibroCodePrefix
     ..internalPause = defaultVibroPause;
+
+  /// Имя файла с сохраненными символами
+  String get symbolsFilename         => defaultSymbolsFilename;
 }
+

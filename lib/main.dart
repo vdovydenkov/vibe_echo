@@ -29,6 +29,7 @@ void main() async {
   vibeDevice.vibratePreset(preset: VibePreset.launched);
 
   final Config cfg = Config.instance;
+  await cfg.load();
   setupDependency<Config>(cfg);
 
   runApp(const VibeEchoApp());
@@ -55,7 +56,6 @@ class HomeScreen extends StatefulWidget {
 
 // Состояние главной страницы
 class _HomeScreenState extends State<HomeScreen> {
-  // Достаём синглтоны: логгер и устройство
   final vibeDevice = getDependency<HapticEngine>();
   final myLog      = getDependency<Logger>();
   final cfg        = getDependency<Config>();
@@ -158,8 +158,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       // Тело экрана
       body: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // пространство между текстом и кнопками
-        crossAxisAlignment: CrossAxisAlignment.center,      // выравниваем по вертикали
+        // пространство между текстом и кнопками
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // выравниваем по вертикали
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Левая часть — текстовое поле
           Expanded(
