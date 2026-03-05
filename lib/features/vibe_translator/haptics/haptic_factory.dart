@@ -1,8 +1,8 @@
 // lib/services/haptics/haptic_factory.dart
 
-import 'package:vibe_echo/services/haptics/haptic_interface.dart';
-import 'package:vibe_echo/services/haptics/haptic_simple.dart';
-import 'package:vibe_echo/services/haptics/haptic_advanced.dart';
+import 'package:vibe_echo/features/vibe_translator/haptics/haptic_interface.dart';
+import 'package:vibe_echo/features/vibe_translator/haptics/haptic_simple.dart';
+import 'package:vibe_echo/features/vibe_translator/haptics/haptic_advanced.dart';
 
 const hapticModeRaw = String.fromEnvironment(
   'HAPTIC_MODE',

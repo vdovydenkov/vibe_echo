@@ -1,6 +1,6 @@
 // lib/services/haptics/haptic_simple.dart
 
-import 'package:vibe_echo/services/haptics/haptic_interface.dart';
+import 'package:vibe_echo/features/vibe_translator/haptics/haptic_interface.dart';
 import 'package:vibration/vibration.dart';
 import 'package:vibration/vibration_presets.dart';
 

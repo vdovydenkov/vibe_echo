@@ -3,8 +3,8 @@
 import 'package:vibe_echo/core/di.dart';
 import 'package:vibe_echo/config/configurator.dart';
 import 'package:logger/logger.dart';
-import 'package:vibe_echo/services/commands/handlers.dart';
-import 'package:vibe_echo/vibe_language/vibe_language.dart';
+import 'package:vibe_echo/features/local_server/command_handlers/handlers.dart';
+import 'package:vibe_echo/features/vibe_translator/vibe_language.dart';
 
 /// Возможные значение после разбора команды
 enum ActionValues {

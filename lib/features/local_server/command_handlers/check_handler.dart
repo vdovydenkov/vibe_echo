@@ -1,4 +1,4 @@
-// lib/services/commands/check_handler.dart
+// lib/features/local_server/command_handlers/check_handler.dart
 part of 'handlers.dart';
 
 /// Обработчик команды CHECK
